@@ -1,31 +1,12 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import dynamic from 'next/dynamic';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MapPin, Filter, Layers } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-
-// Dynamic imports to avoid SSR issues with Leaflet
-const MapContainer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.MapContainer),
-  { ssr: false, loading: () => <MapSkeleton /> }
-);
-const TileLayer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Popup),
-  { ssr: false }
-);
 
 const WONOSOBO_CENTER: [number, number] = [-7.3625, 109.7083];
 const DEFAULT_ZOOM = 14;
@@ -94,54 +75,135 @@ function MapSkeleton() {
   );
 }
 
-function createCustomIcon(color: string) {
-  if (typeof window === 'undefined') return null;
+// This component is loaded entirely client-side via dynamic import
+function MapInner({ reports }: { reports: Report[] }) {
+  const [MapContainer, setMapContainer] = useState<React.ComponentType<any> | null>(null);
+  const [TileLayer, setTileLayer] = useState<React.ComponentType<any> | null>(null);
+  const [Marker, setMarker] = useState<React.ComponentType<any> | null>(null);
+  const [Popup, setPopup] = useState<React.ComponentType<any> | null>(null);
+  const [L, setL] = useState<any>(null);
+  const [icons, setIcons] = useState<Record<string, any>>({});
 
-  // Leaflet must be required at runtime since it's client-only
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const L = require('leaflet');
-  const svgIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${color}" stroke="white" stroke-width="1.5"/>
-      <circle cx="12" cy="9" r="3" fill="white"/>
-    </svg>
-  `;
+  useEffect(() => {
+    async function loadLeaflet() {
+      // Load Leaflet library
+      const leaflet = await import('leaflet');
+      const reactLeaflet = await import('react-leaflet');
 
-  return L.divIcon({
-    html: svgIcon,
-    className: 'custom-marker-icon',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-  });
+      // Fix default icon issue
+      delete (leaflet.Icon.Default.prototype as any)._getIconUrl;
+      leaflet.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+
+      // Create custom colored icons
+      const newIcons: Record<string, any> = {};
+      for (const [status, color] of Object.entries(STATUS_COLORS)) {
+        newIcons[status] = leaflet.divIcon({
+          html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${color}" stroke="white" stroke-width="1.5"/>
+            <circle cx="12" cy="9" r="3" fill="white"/>
+          </svg>`,
+          className: '',
+          iconSize: [28, 28],
+          iconAnchor: [14, 28],
+          popupAnchor: [0, -28],
+        });
+      }
+
+      setL(leaflet);
+      setMapContainer(() => reactLeaflet.MapContainer);
+      setTileLayer(() => reactLeaflet.TileLayer);
+      setMarker(() => reactLeaflet.Marker);
+      setPopup(() => reactLeaflet.Popup);
+      setIcons(newIcons);
+    }
+    loadLeaflet();
+  }, []);
+
+  if (!MapContainer || !TileLayer || !Marker || !Popup || !L) {
+    return <MapSkeleton />;
+  }
+
+  return (
+    <MapContainer
+      center={WONOSOBO_CENTER}
+      zoom={DEFAULT_ZOOM}
+      className="w-full h-full"
+      scrollWheelZoom={true}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {reports.map((report) => (
+        <Marker
+          key={report.id}
+          position={[report.latitude, report.longitude]}
+          icon={icons[report.status] || undefined}
+        >
+          <Popup maxWidth={280} minWidth={200}>
+            <div style={{ fontFamily: 'var(--font-sans, system-ui, sans-serif)', fontSize: '14px' }}>
+              <h3 style={{ fontWeight: 600, margin: '0 0 6px', color: '#111827', lineHeight: 1.3 }}>
+                {report.title}
+              </h3>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '2px 8px', borderRadius: 9999, fontSize: 10, fontWeight: 600,
+                  border: `1px solid`,
+                  backgroundColor: STATUS_COLORS[report.status] + '20',
+                  color: STATUS_COLORS[report.status],
+                }}>
+                  {STATUS_LABELS[report.status]}
+                </span>
+                <span style={{
+                  padding: '2px 8px', borderRadius: 9999, fontSize: 10,
+                  backgroundColor: '#f4f4f5', color: '#71717a',
+                }}>
+                  {report.category}
+                </span>
+              </div>
+              {report.address && (
+                <p style={{ margin: 0, fontSize: 12, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  📍 {report.address}
+                </p>
+              )}
+              <p style={{ margin: '4px 0 0', fontSize: 10, color: '#9ca3af' }}>
+                {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </p>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  );
 }
 
 export default function CityMap() {
-  const { navigateTo } = useStore();
+  const { navigateTo, setSelectedReportId } = useStore();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<ReportStatus | 'SEMUA'>('SEMUA');
-  const [mapReady, setMapReady] = useState(false);
-  const [icons, setIcons] = useState<Record<ReportStatus, any>>({
-    DITERIMA: null,
-    DIPROSES: null,
-    DALAM_PERBAIKAN: null,
-    SELESAI: null,
-  });
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Load Leaflet CSS dynamically
+  // Load Leaflet CSS via link tag
   useEffect(() => {
-    import('leaflet/dist/leaflet.css');
-  }, []);
-
-  // Initialize custom icons once client-side
-  useEffect(() => {
-    const newIcons = {} as Record<ReportStatus, any>;
-    for (const [status, color] of Object.entries(STATUS_COLORS)) {
-      newIcons[status as ReportStatus] = createCustomIcon(color);
+    if (document.getElementById('leaflet-css')) {
+      setMapLoaded(true);
+      return;
     }
-    setIcons(newIcons);
-    setMapReady(true);
+    const link = document.createElement('link');
+    link.id = 'leaflet-css';
+    link.rel = 'stylesheet';
+    link.href = '/leaflet.css';
+    link.onload = () => setMapLoaded(true);
+    document.head.appendChild(link);
+    // Fallback in case onload doesn't fire
+    const timer = setTimeout(() => setMapLoaded(true), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   // Fetch reports
@@ -151,7 +213,7 @@ export default function CityMap() {
       const res = await fetch('/api/reports?role=ALL');
       if (res.ok) {
         const data = await res.json();
-        setReports(data);
+        setReports(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error('Failed to fetch reports for map:', err);
@@ -177,19 +239,10 @@ export default function CityMap() {
     {} as Record<string, number>
   );
 
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
-
   return (
     <div className="space-y-4">
       {/* Status Filter Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <div className="flex items-center gap-1.5 text-muted-foreground shrink-0 mr-1">
           <Filter className="size-4" />
           <span className="text-sm font-medium hidden sm:inline">Filter:</span>
@@ -205,19 +258,13 @@ export default function CityMap() {
               key={opt.value}
               variant={isActive ? 'default' : 'outline'}
               size="sm"
-              className={`shrink-0 gap-1.5 text-xs transition-all ${
-                isActive ? 'shadow-sm' : ''
-              }`}
+              className={`shrink-0 gap-1.5 text-xs transition-all ${isActive ? 'shadow-sm' : ''}`}
               onClick={() => setActiveFilter(opt.value)}
             >
               <span className={`size-2 rounded-full ${dotColor}`} />
               {opt.label}
               {opt.value !== 'SEMUA' && (
-                <span
-                  className={`ml-0.5 text-[10px] ${
-                    isActive ? 'text-primary-foreground/70' : 'text-muted-foreground'
-                  }`}
-                >
+                <span className={`ml-0.5 text-[10px] ${isActive ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                   {statusCounts[opt.value] || 0}
                 </span>
               )}
@@ -233,60 +280,7 @@ export default function CityMap() {
             <MapSkeleton />
           ) : (
             <div className="w-full h-[500px] md:h-[600px] relative">
-              {mapReady && (
-                <MapContainer
-                  center={WONOSOBO_CENTER}
-                  zoom={DEFAULT_ZOOM}
-                  className="w-full h-full z-0"
-                  scrollWheelZoom={true}
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  {filteredReports.map((report) => (
-                    <Marker
-                      key={report.id}
-                      position={[report.latitude, report.longitude]}
-                      icon={icons[report.status]}
-                    >
-                      <Popup maxWidth={280} minWidth={200}>
-                        <div className="font-sans text-sm space-y-2">
-                          <h3 className="font-semibold text-gray-900 leading-tight">
-                            {report.title}
-                          </h3>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                                STATUS_BG_CLASSES[report.status]
-                              }`}
-                            >
-                              <span
-                                className={`size-1.5 rounded-full ${
-                                  STATUS_DOT_CLASSES[report.status]
-                                }`}
-                              />
-                              {STATUS_LABELS[report.status]}
-                            </span>
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                              {report.category}
-                            </Badge>
-                          </div>
-                          {report.address && (
-                            <p className="text-gray-500 text-xs flex items-start gap-1">
-                              <MapPin className="size-3 mt-0.5 shrink-0" />
-                              {report.address}
-                            </p>
-                          )}
-                          <p className="text-gray-400 text-[10px]">
-                            {formatDate(report.createdAt)}
-                          </p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  ))}
-                </MapContainer>
-              )}
+              {mapLoaded && <MapInner reports={filteredReports} />}
 
               {/* Legend Overlay */}
               <div className="absolute bottom-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg border shadow-md p-3">
