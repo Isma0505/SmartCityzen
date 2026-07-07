@@ -22,9 +22,12 @@ export default function Home() {
 
   const { setCurrentPage } = useStore();
 
-  // Reset to landing if no user and on auth/dashboard page
+  // Pages accessible without login
+  const publicPages = ['landing', 'login', 'register', 'peta', 'statistik'];
+
+  // Reset to landing if no user and on protected page
   useEffect(() => {
-    if (!user && !['landing', 'login', 'register'].includes(currentPage)) {
+    if (!user && !publicPages.includes(currentPage)) {
       setCurrentPage('landing');
     }
   }, [user, currentPage, setCurrentPage]);
