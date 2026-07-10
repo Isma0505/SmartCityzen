@@ -136,7 +136,7 @@ export default function LandingPage() {
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img
-            src="/hero-Banjarnegara.png"
+            src="/hero-banjarnegara.png"
             alt="Kota Banjarnegara"
             className="w-full h-full object-cover"
           />
