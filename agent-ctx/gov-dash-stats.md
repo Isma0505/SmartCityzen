@@ -1,11 +1,11 @@
-# Worklog - Government Dashboard & Statistics Page
+﻿# Worklog - Government Dashboard & Statistics Page
 
 ## Agent: Government Dashboard & Statistics Builder
 ## Task ID: gov-dash-stats
 
 ### Files Created
 1. **`/src/components/government/GovernmentDashboard.tsx`** — Full government dashboard with:
-   - Sticky header with "Dashboard Pemerintah - Kota Wonosobo" title and user info
+   - Sticky header with "Dashboard Pemerintah - Kota Banjarnegara" title and user info
    - 4 summary stats cards (Total Laporan, Belum Ditangani, Sedang Diproses, Selesai) with icons and loading skeletons
    - Filter bar with search input, category select (10 categories), status select (4 statuses)
    - Responsive reports table with horizontal scroll on mobile — columns: No, Judul, Kategori, Status (colored Badge), Prioritas (colored Badge), Pelapor, Tanggal, Aksi (Detail button → setSelectedReportId + navigateTo)

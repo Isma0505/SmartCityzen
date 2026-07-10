@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,6 +22,7 @@ model User {
   reports      Report[]
   comments     Comment[]
   notifications Notification[]
+  reportHistories ReportHistory[]
 }
 
 model Report {
@@ -84,6 +85,8 @@ model ReportHistory {
   createdAt DateTime @default(now())
 
   report Report @relation(fields: [reportId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model ReportSupport {

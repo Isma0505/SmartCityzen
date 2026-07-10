@@ -25,14 +25,19 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { userId, name, phone } = await request.json();
+    const { userId, name, phone, avatar } = await request.json();
     if (!userId) {
       return NextResponse.json({ error: 'User ID wajib' }, { status: 400 });
     }
 
+    const updateData: Record<string, string | null> = {};
+    if (name !== undefined) updateData.name = name;
+    if (phone !== undefined) updateData.phone = phone;
+    if (avatar !== undefined) updateData.avatar = avatar;
+
     const user = await db.user.update({
       where: { id: userId },
-      data: { name, phone },
+      data: updateData,
     });
 
     return NextResponse.json({
@@ -41,6 +46,7 @@ export async function PUT(request: NextRequest) {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      avatar: user.avatar,
       points: user.points,
     });
   } catch (error: any) {

@@ -8,13 +8,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User ID wajib' }, { status: 400 });
     }
 
+    const unreadOnly =
+      request.nextUrl.searchParams.get("unreadOnly") === "true";
+
     const notifications = await db.notification.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        userId,
+        ...(unreadOnly ? { read: false } : {}),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
       take: 50,
     });
 
-    return NextResponse.json(notifications);
+    const unreadCount = await db.notification.count({
+      where: {
+        userId,
+        read: false,
+      },
+    });
+
+    return NextResponse.json({
+      notifications,
+      unreadCount,
+  });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Gagal mengambil notifikasi' }, { status: 500 });
   }

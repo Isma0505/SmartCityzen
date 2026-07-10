@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import ZAI from 'z-ai-web-dev-sdk';
+import { GoogleGenAI } from "@google/genai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,9 +42,11 @@ export async function POST(request: NextRequest) {
       : null;
 
     // AI Analysis using z-ai-web-dev-sdk
-    const zai = await ZAI.create();
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY!,
+    });
 
-    const systemPrompt = `Kamu adalah AI analis laporan kota untuk SmartCityzen Wonosobo. 
+    const systemPrompt = `Kamu adalah AI analis laporan kota untuk SmartCityzen Banjarnegara. 
 Analisis laporan warga dan berikan output dalam format JSON yang valid dengan struktur berikut:
 {
   "category": "salah satu dari: Jalan Rusak, Penerangan Jalan, Sampah & Kebersihan, Drainase, Fasilitas Umum, Lalu Lintas, Lingkungan, Parkir, Lainnya",
@@ -69,16 +71,16 @@ ${duplicateInfo ? 'Catatan: ' + duplicateInfo : ''}
 
 Analisis laporan ini.`;
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'assistant', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-      thinking: { type: 'disabled' },
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `${systemPrompt}
+
+    ${userMessage}`,
     });
 
-    let aiResult;
-    const responseText = completion.choices[0]?.message?.content || '';
+    const responseText = response.text ?? "";
+
+    let aiResult: any;
     
     try {
       // Try to extract JSON from the response

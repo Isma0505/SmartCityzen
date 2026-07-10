@@ -208,6 +208,7 @@ export default function ReportDetail() {
       if (res.ok) {
         setCommentText('');
         fetchReport();
+        triggerRefreshReports();
       }
     } catch {
       // silent

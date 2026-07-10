@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore } from '@/store/useStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,8 @@ import {
   FileText,
   Star,
   ArrowLeft,
+  Camera,
+  ImagePlus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -37,7 +39,7 @@ function getBadgeInfo(points: number) {
       label: 'Pahlawan Kota',
       color: 'bg-amber-100 text-amber-800 border-amber-300',
       icon: <Award className="size-5 text-amber-600" />,
-      description: 'Kontribusi luar biasa untuk kota Wonosobo!',
+      description: 'Kontribusi luar biasa untuk kota Banjarnegara!',
     };
   }
   if (points >= 51) {
@@ -74,7 +76,8 @@ function getInitials(name: string) {
 }
 
 export default function ProfilePage() {
-  const { user, logout, navigateTo, setUser } = useStore();
+  const { user, logout, navigateTo, setUser, refreshReports } = useStore();
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [stats, setStats] = useState<ProfileStats>({
     points: 0,
     totalLaporan: 0,
@@ -83,19 +86,21 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [editName, setEditName] = useState('');
   const [editPhone, setEditPhone] = useState('');
 
   const fetchProfile = useCallback(async () => {
     if (!user) return;
     try {
+      setIsLoading(true);
       const res = await fetch(`/api/profile?userId=${user.id}`);
       if (res.ok) {
         const data = await res.json();
         setStats({
           points: data.points ?? 0,
-          totalLaporan: data.totalLaporan ?? 0,
-          totalKomentar: data.totalKomentar ?? 0,
+          totalLaporan: data._count?.reports ?? 0,
+          totalKomentar: data._count?.comments ?? 0,
         });
       }
     } catch {
@@ -107,7 +112,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile]);
+  }, [fetchProfile, refreshReports]);
 
   useEffect(() => {
     if (user) {
@@ -145,6 +150,39 @@ export default function ProfilePage() {
     }
   };
 
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Hanya file gambar yang diperbolehkan');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Ukuran file maksimal 5MB');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      formData.append('userId', user.id);
+
+      const res = await fetch('/api/profile/avatar', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (res.ok) {
+        setUser({ ...user, avatar: data.avatarUrl });
+        toast.success('Foto profil berhasil diperbarui');
+      } else {
+        toast.error(data.error || 'Gagal mengunggah foto profil');
+      }
+    } catch {
+      toast.error('Terjadi kesalahan saat mengunggah foto');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   const badgeInfo = getBadgeInfo(stats.points);
 
   if (!user) {
@@ -159,13 +197,43 @@ export default function ProfilePage() {
     <div className="flex flex-col items-center gap-6 px-4 pb-8">
       {/* Profile Header Card */}
       <Card className="w-full max-w-2xl">
-        <CardContent className="flex flex-col items-center gap-4 pt-2">
-          <Avatar className="size-24 border-4 border-emerald-200">
-            {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
-            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-bold">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
+        <CardContent className="flex flex-col items-center gap-4 pt-6 pb-6">
+          {/* Clickable Avatar */}
+          <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
+            <Avatar className="size-28 border-4 border-emerald-200 transition-opacity group-hover:opacity-80">
+              {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
+              <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-bold">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            {/* Camera overlay */}
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 group-hover:bg-black/30 transition-all">
+              {isUploadingAvatar ? (
+                <Loader2 className="h-7 w-7 text-white animate-spin opacity-0 group-hover:opacity-100" />
+              ) : (
+                <Camera className="h-7 w-7 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              )}
+            </div>
+            {/* Edit badge */}
+            <div className="absolute -bottom-1 -right-1 flex items-center justify-center size-8 rounded-full bg-emerald-600 border-2 border-white shadow-md">
+              {isUploadingAvatar ? (
+                <Loader2 className="size-4 text-white animate-spin" />
+              ) : (
+                <Camera className="size-4 text-white" />
+              )}
+            </div>
+          </div>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleAvatarUpload(file);
+            }}
+          />
+          <p className="text-xs text-muted-foreground -mt-2">Klik foto untuk mengubah</p>
           <div className="text-center">
             <h2 className="text-xl font-bold">{user.name}</h2>
             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mt-1">

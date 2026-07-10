@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
@@ -126,7 +126,7 @@ export default function LoginPage() {
             <div className="mt-4 p-3 rounded-lg bg-muted/50 border">
               <p className="text-xs font-medium text-muted-foreground mb-1.5">Akun Demo:</p>
               <div className="space-y-1 text-xs text-muted-foreground">
-                <p><span className="font-medium">Admin:</span> admin@wonosobo.go.id / admin123</p>
+                <p><span className="font-medium">Admin:</span> admin@Banjarnegara.go.id / admin123</p>
                 <p><span className="font-medium">Warga:</span> budi@email.com / warga123</p>
               </div>
             </div>

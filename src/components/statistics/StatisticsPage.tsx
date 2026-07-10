@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -205,7 +205,7 @@ export default function StatisticsPage() {
           <div>
             <h1 className="text-lg font-semibold">Statistik & Analitik</h1>
             <p className="text-xs text-muted-foreground">
-              Data komprehensif laporan warga Kota Wonosobo
+              Data komprehensif laporan warga Kota Banjarnegara
             </p>
           </div>
         </div>
@@ -366,8 +366,8 @@ export default function StatisticsPage() {
                       paddingAngle={4}
                       dataKey="value"
                       nameKey="name"
-                      label={({ name, value }) => `${name}: ${value}`}
-                      labelLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                      label={false}
+                      labelLine={false}
                     >
                       {priorityPieData.map((entry) => (
                         <Cell
@@ -376,7 +376,17 @@ export default function StatisticsPage() {
                         />
                       ))}
                     </Pie>
+                    
                     <Tooltip contentStyle={tooltipStyle} />
+
+                    <Legend
+                      layout="vertical"
+                      align="right"
+                      verticalAlign="middle"
+                      formatter={(value: string) => (
+                        <span className="text-xs">{value.replace(/_/g, ' ')}</span>
+                      )}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               )}

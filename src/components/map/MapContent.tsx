@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -6,8 +6,8 @@ import L from 'leaflet';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Layers } from 'lucide-react';
 
-// Wonosobo Regency Government Office (Kantor Bupati Wonosobo)
-const WONOSOBO_CENTER: [number, number] = [-7.3524, 109.7091];
+// Banjarnegara Regency Government Office (Kantor Bupati Banjarnegara)
+const BANJARNEGARA_CENTER: [number, number] = [-7.3524, 109.7091];
 const DEFAULT_ZOOM = 13;
 
 type ReportStatus = 'DITERIMA' | 'DIPROSES' | 'DALAM_PERBAIKAN' | 'SELESAI';
@@ -64,7 +64,7 @@ function createStatusIcon(color: string) {
   });
 }
 
-// Center marker icon for Wonosobo
+// Center marker icon for Banjarnegara
 function createCenterIcon() {
   return L.divIcon({
     html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36">
@@ -101,7 +101,7 @@ export default function MapContent({ reports, filteredCount, activeFilterLabel, 
   return (
     <>
       <MapContainer
-        center={WONOSOBO_CENTER}
+        center={BANJARNEGARA_CENTER}
         zoom={DEFAULT_ZOOM}
         className="w-full h-full rounded-xl"
         scrollWheelZoom={true}
@@ -112,13 +112,13 @@ export default function MapContent({ reports, filteredCount, activeFilterLabel, 
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Wonosobo center marker */}
-        <Marker position={WONOSOBO_CENTER} icon={centerIcon}>
+        {/* Banjarnegara center marker */}
+        <Marker position={BANJARNEGARA_CENTER} icon={centerIcon}>
           <Popup>
             <div style={{ fontFamily: 'system-ui, sans-serif', fontSize: '14px', textAlign: 'center' }}>
-              <strong style={{ color: '#059669', fontSize: '15px' }}>🏛️ Wonosobo</strong>
+              <strong style={{ color: '#059669', fontSize: '15px' }}>🏛️ Banjarnegara</strong>
               <br />
-              <span style={{ color: '#6b7280', fontSize: '12px' }}>Kabupaten Wonosobo, Jawa Tengah</span>
+              <span style={{ color: '#6b7280', fontSize: '12px' }}>Kabupaten Banjarnegara, Jawa Tengah</span>
             </div>
           </Popup>
         </Marker>
@@ -201,11 +201,11 @@ export default function MapContent({ reports, filteredCount, activeFilterLabel, 
         </Badge>
       </div>
 
-      {/* Wonosobo label */}
+      {/* Banjarnegara label */}
       <div className="absolute top-4 right-4 z-[1000]">
         <Badge className="bg-emerald-600 text-white shadow-sm gap-1.5 px-3 py-1 border-0">
           <MapPin className="size-3.5" />
-          <span className="text-xs font-semibold">Kab. Wonosobo</span>
+          <span className="text-xs font-semibold">Kab. Banjarnegara</span>
         </Badge>
       </div>
     </>

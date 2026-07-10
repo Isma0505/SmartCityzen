@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SmartCityzen Wonosobo - Platform Aspirasi & Pelaporan Kota",
-  description: "Platform digital untuk aspirasi dan pelaporan masalah kota Wonosobo. Didukung AI untuk analisis cerdas dan prioritas otomatis.",
-  keywords: ["SmartCityzen", "Wonosobo", "pelaporan kota", "aspirasi warga", "smart city", "pemerintah"],
+  title: "SmartCityzen Banjarnegara - Platform Aspirasi & Pelaporan Kota",
+  description: "Platform digital untuk aspirasi dan pelaporan masalah kota Banjarnegara. Didukung AI untuk analisis cerdas dan prioritas otomatis.",
+  keywords: ["SmartCityzen", "Banjarnegara", "pelaporan kabupaten", "aspirasi warga", "smart city", "pemerintah"],
   authors: [{ name: "SmartCityzen Team" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",

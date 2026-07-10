@@ -39,7 +39,7 @@ const DEFAULT_LNG = 109.7083;
 type Step = 1 | 2 | 3;
 
 export default function CreateReportForm() {
-  const { user, navigateTo, setAnalysisResult } = useStore();
+  const { user, navigateTo, setAnalysisResult, triggerRefreshReports } = useStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
@@ -65,8 +65,10 @@ export default function CreateReportForm() {
     }
 
     setError('');
+    // Show preview immediately from local file
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
+    setImageUrl(null); // will be set after upload
 
     const formData = new FormData();
     formData.append('image', file);
@@ -124,6 +126,8 @@ export default function CreateReportForm() {
         setSubmitting(false);
         return;
       }
+      
+      triggerRefreshReports();
 
       // Start AI analysis
       setAnalyzing(true);
@@ -181,8 +185,16 @@ export default function CreateReportForm() {
     { num: 3, label: 'Kirim' },
   ];
 
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUploadWithState = async (file: File) => {
+    setUploading(true);
+    await handleImageUpload(file);
+    setUploading(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 md:p-8">
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-6 text-center">
@@ -190,7 +202,7 @@ export default function CreateReportForm() {
             Buat Laporan Baru
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Laporkan permasalahan kota Wonosobo untuk ditangani pemerintah
+            Laporkan permasalahan kota Banjarnegara untuk ditangani pemerintah
           </p>
         </div>
 
@@ -271,54 +283,66 @@ export default function CreateReportForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Foto Pendukung</Label>
-                  <div className="flex items-start gap-4">
-                    {imagePreview ? (
-                      <div className="relative">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="h-32 w-32 rounded-lg border border-slate-200 object-cover"
-                        />
-                        <button
-                          onClick={removeImage}
-                          className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600 transition-colors"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                        {imageUrl && (
-                          <div className="absolute bottom-1 left-1 flex items-center gap-1 rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                            <CheckCircle2 className="h-2.5 w-2.5" />
-                            Terunggah
-                          </div>
-                        )}
+                  <Label>Foto Pendukung <span className="text-slate-400 font-normal text-xs">(opsional)</span></Label>
+                  {imagePreview ? (
+                    <div className="relative w-full rounded-xl border-2 border-emerald-200 bg-emerald-50 p-3">
+                      <div className="flex items-center gap-4">
+                        <div className="relative shrink-0">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="h-24 w-24 rounded-lg border border-slate-200 object-cover"
+                          />
+                          {uploading && (
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
+                              <Loader2 className="h-6 w-6 animate-spin text-white" />
+                            </div>
+                          )}
+                          {imageUrl && !uploading && (
+                            <div className="absolute bottom-1 left-1 flex items-center gap-1 rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                              <CheckCircle2 className="h-2.5 w-2.5" />
+                              Terunggah
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-700 truncate">{fileInputRef.current?.files?.[0]?.name || 'Foto dipilih'}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {uploading ? 'Sedang mengunggah...' : imageUrl ? 'Foto berhasil diunggah' : 'Memproses...'}
+                          </p>
+                          <button
+                            onClick={removeImage}
+                            disabled={uploading}
+                            className="mt-2 flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors disabled:opacity-40"
+                          >
+                            <X className="h-3 w-3" /> Hapus foto
+                          </button>
+                        </div>
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 text-slate-400 transition-colors hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-600"
-                      >
-                        <ImagePlus className="h-8 w-8" />
-                        <span className="text-xs">Pilih Foto</span>
-                      </button>
-                    )}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleImageUpload(file);
-                      }}
-                    />
-                    <div className="flex flex-col justify-center">
-                      <p className="text-xs text-slate-500">
-                        Unggah foto untuk memperjelas laporan
-                      </p>
-                      <p className="text-xs text-slate-400">Maks. 5MB (JPG, PNG)</p>
                     </div>
-                  </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 py-8 text-slate-400 transition-all hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 active:scale-[0.99]"
+                    >
+                      <ImagePlus className="h-10 w-10" />
+                      <div className="text-center">
+                        <p className="text-sm font-medium">Klik untuk pilih foto</p>
+                        <p className="text-xs mt-0.5">JPG, PNG, WEBP — maks. 5MB</p>
+                      </div>
+                    </button>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUploadWithState(file);
+                    }}
+                  />
                 </div>
 
                 <div className="flex justify-end pt-2">
@@ -384,7 +408,7 @@ export default function CreateReportForm() {
                   <div className="mt-3 flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 p-2.5">
                     <MapPin className="h-4 w-4 mt-0.5 text-amber-600 shrink-0" />
                     <p className="text-xs text-amber-700">
-                      Lokasi akan otomatis diisi berdasarkan kota Wonosobo
+                      Lokasi akan otomatis diisi berdasarkan kota Banjarnegara
                     </p>
                   </div>
                 </div>
@@ -393,7 +417,7 @@ export default function CreateReportForm() {
                   <Label htmlFor="address">Alamat Lengkap (opsional)</Label>
                   <Input
                     id="address"
-                    placeholder="Contoh: Jl. Diponegoro No. 15, Wonosobo"
+                    placeholder="Contoh: Jl. Diponegoro No. 15, Banjarnegara"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                   />
@@ -441,7 +465,7 @@ export default function CreateReportForm() {
                     <div>
                       <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Lokasi</p>
                       <p className="mt-0.5 text-sm text-slate-700">
-                        {address || 'Wonosobo, Jawa Tengah'}
+                        {address || 'Banjarnegara, Jawa Tengah'}
                       </p>
                     </div>
                   </div>

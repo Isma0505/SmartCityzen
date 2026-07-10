@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export async function POST() {
   try {
     // Seed admin user
-    const adminEmail = 'admin@wonosobo.go.id';
+    const adminEmail = 'admin@Banjarnegara.go.id';
     const existingAdmin = await db.user.findUnique({ where: { email: adminEmail } });
     
     if (existingAdmin) {
@@ -16,7 +16,7 @@ export async function POST() {
 
     await db.user.create({
       data: {
-        name: 'Admin Wonosobo',
+        name: 'Admin Banjarnegara',
         email: adminEmail,
         password: hashedPassword,
         role: 'ADMIN',
@@ -54,10 +54,10 @@ export async function POST() {
     const sampleReports = [
       {
         title: 'Jalan Berlubang di Jl. Diponegoro',
-        description: 'Jalan di depan Pasar Wonosobo bagian selatan terdapat lubang besar yang berbahaya bagi pengendara motor. Sudah ada beberapa kecelakaan kecil.',
+        description: 'Jalan di depan Pasar Banjarnegara bagian selatan terdapat lubang besar yang berbahaya bagi pengendara motor. Sudah ada beberapa kecelakaan kecil.',
         latitude: -7.3625,
         longitude: 109.7083,
-        address: 'Jl. Diponegoro, Wonosobo Kota',
+        address: 'Jl. Diponegoro, Banjarnegara Kota',
         category: 'Jalan Rusak',
         status: 'DIPROSES',
         priority: 'TINGGI',
@@ -72,7 +72,7 @@ export async function POST() {
         description: 'Lampu penerangan jalan di sepanjang Jl. Veteran sudah mati lebih dari 2 minggu. Area menjadi gelap di malam hari dan rawan kejahatan.',
         latitude: -7.3600,
         longitude: 109.7050,
-        address: 'Jl. Veteran, Wonosobo Kota',
+        address: 'Jl. Veteran, Banjarnegara Kota',
         category: 'Penerangan Jalan',
         status: 'DITERIMA',
         priority: 'SEDANG',
@@ -87,7 +87,7 @@ export async function POST() {
         description: 'Sampah plastik dan rumah tangga menumpuk di bantaran Sungai Serayu dekat Jembatan Kalianget. Bau tidak sedap dan mengancam ekosistem sungai.',
         latitude: -7.3650,
         longitude: 109.7100,
-        address: 'Sungai Serayu, Kalianget, Wonosobo',
+        address: 'Sungai Serayu, Kalianget, Banjarnegara',
         category: 'Sampah & Kebersihan',
         status: 'DALAM_PERBAIKAN',
         priority: 'TINGGI',
@@ -102,7 +102,7 @@ export async function POST() {
         description: 'Saluran drainase di Jl. Kartini tersumbat oleh sampah dan sedimentasi. Saat hujan, air menggenang setinggi 30cm dan mengganggu aktivitas warga.',
         latitude: -7.3580,
         longitude: 109.7120,
-        address: 'Jl. Kartini, Kejawan, Wonosobo',
+        address: 'Jl. Kartini, Kejawan, Banjarnegara',
         category: 'Drainase',
         status: 'SELESAI',
         priority: 'SEDANG',
@@ -114,10 +114,10 @@ export async function POST() {
       },
       {
         title: 'Fasilitas Taman Kota Perlu Renovasi',
-        description: 'Bangku taman dan ayunan di Taman Kota Wonosobo sudah rusak. Anak-anak tidak bisa bermain dengan aman.',
+        description: 'Bangku taman dan ayunan di Taman Kota Banjarnegara sudah rusak. Anak-anak tidak bisa bermain dengan aman.',
         latitude: -7.3610,
         longitude: 109.7060,
-        address: 'Taman Kota, Wonosobo',
+        address: 'Taman Kota, Banjarnegara',
         category: 'Fasilitas Umum',
         status: 'DITERIMA',
         priority: 'RENDAH',

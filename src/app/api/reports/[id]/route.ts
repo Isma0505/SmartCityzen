@@ -26,6 +26,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(report);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Gagal mengambil laporan' }, { status: 500 });
+    console.error("GET REPORT DETAIL ERROR:", error);
+    return NextResponse.json(
+      {
+        error: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    );
   }
 }

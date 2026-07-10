@@ -1,17 +1,17 @@
-# SmartCityzen Wonosobo
+﻿﻿# SmartCityzen Banjarnegara
 
-**Platform Aspirasi & Pelaporan Kota Cerdas**
+**Platform Aspirasi & Pelaporan Kabupaten Cerdas**
 
-SmartCityzen adalah platform digital untuk mewujudkan kota Wonosobo yang cerdas, partisipatif, dan berkelanjutan. Warga dapat melaporkan masalah infrastruktur dan pelayanan publik, yang kemudian dianalisis secara otomatis oleh AI untuk membantu pemerintah menangani dengan cepat dan tepat.
+SmartCityzen adalah platform digital untuk mewujudkan kabupaten Banjarnegara yang cerdas, partisipatif, dan berkelanjutan. Warga dapat melaporkan masalah infrastruktur dan pelayanan publik, yang kemudian dianalisis secara otomatis oleh AI untuk membantu pemerintah menangani dengan cepat dan tepat.
 
 ---
 
 ## Fitur Utama
 
 ### 1. Landing Page
-- Penjelasan platform SmartCityzen Wonosobo
+- Penjelasan platform SmartCityzen Banjarnegara
 - Tujuan SDGs (SDG 9, SDG 11, SDG 16)
-- Statistik laporan kota
+- Statistik laporan kabupaten
 - Panduan cara kerja
 
 ### 2. Login & Register
@@ -29,7 +29,7 @@ SmartCityzen adalah platform digital untuk mewujudkan kota Wonosobo yang cerdas,
 ### 4. Buat Laporan
 - Form lengkap: judul, deskripsi, upload foto
 - Pilih kategori masalah
-- Lokasi otomatis (Kota Wonosobo)
+- Lokasi otomatis (Kabupaten Banjarnegara)
 - **AI menganalisis secara otomatis** setelah laporan dikirim
 
 ### 5. Hasil Analisis AI
@@ -41,8 +41,8 @@ SmartCityzen adalah platform digital untuk mewujudkan kota Wonosobo yang cerdas,
 - Deteksi laporan duplikat
 - Skor prioritas otomatis (1-100)
 
-### 6. Peta Kota Interaktif
-- Peta OpenStreetMap centered on Wonosobo
+### 6. Peta Kabupaten Interaktif
+- Peta OpenStreetMap yang berpusat di Banjarnegara
 - Marker berwarna berdasarkan status:
   - 🔴 Merah: Belum ditangani
   - 🟡 Kuning: Diproses
@@ -75,7 +75,7 @@ SmartCityzen adalah platform digital untuk mewujudkan kota Wonosobo yang cerdas,
 ### 10. Profil Pengguna
 - Data pengguna
 - Pengaturan akun (edit nama, telepon)
-- Badge partisipasi (Pemula, Aktif, Peduli Kota, Pahlawan Kota)
+- Badge partisipasi (Pemula, Aktif, Peduli Kabupaten, Pahlawan Kabupaten)
 - Sistem poin
 
 ---
@@ -112,7 +112,7 @@ SmartCityzen adalah platform digital untuk mewujudkan kota Wonosobo yang cerdas,
 
 ```bash
 git clone <repository-url>
-cd smartcityzen-wonosobo
+cd smartcityzen-Banjarnegara
 ```
 
 ### 2. Install Dependencies
@@ -157,7 +157,7 @@ Data sampel akan otomatis di-seed saat pertama kali membuka aplikasi.
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Admin/Pemerintah** | admin@wonosobo.go.id | admin123 |
+| **Admin/Pemerintah** | admin@Banjarnegara.go.id | admin123 |
 | **Warga** | budi@email.com | warga123 |
 | **Warga** | siti@email.com | warga123 |
 | **Warga** | ahmad@email.com | warga123 |
@@ -280,4 +280,4 @@ bun run lint             # Cek kualitas kode
 
 ## Lisensi
 
-© 2025 SmartCityzen Wonosobo. Dibuat untuk masyarakat Wonosobo.
+© 2026 SmartCityzen Banjarnegara. Dibuat oleh tim Pixel Pioneers.

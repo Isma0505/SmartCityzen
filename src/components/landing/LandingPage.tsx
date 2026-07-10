@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import {
@@ -136,8 +136,8 @@ export default function LandingPage() {
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img
-            src="/hero-wonosobo.png"
-            alt="Kota Wonosobo"
+            src="/hero-Banjarnegara.png"
+            alt="Kota Banjarnegara"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/90 via-emerald-800/80 to-teal-900/70" />
@@ -163,7 +163,7 @@ export default function LandingPage() {
             >
               SmartCityzen{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">
-                Wonosobo
+                Banjarnegara
               </span>
             </motion.h1>
 
@@ -172,7 +172,7 @@ export default function LandingPage() {
               custom={2}
               className="mt-6 text-lg sm:text-xl text-emerald-100/90 max-w-xl leading-relaxed"
             >
-              Platform digital untuk mewujudkan kota Wonosobo yang cerdas,
+              Platform digital untuk mewujudkan kota Banjarnegara yang cerdas,
               partisipatif, dan berkelanjutan. Sampaikan aspirasi Anda dan
               pantau perkembangan kota secara transparan.
             </motion.p>
@@ -244,7 +244,7 @@ export default function LandingPage() {
               custom={1}
               className="mt-4 text-gray-600 max-w-2xl mx-auto"
             >
-              SmartCityzen Wonosobo berkontribusi langsung pada pencapaian
+              SmartCityzen Banjarnegara berkontribusi langsung pada pencapaian
               Sustainable Development Goals (SDGs) PBB.
             </motion.p>
           </motion.div>
@@ -356,7 +356,7 @@ export default function LandingPage() {
               id="stats-heading"
               className="text-3xl sm:text-4xl font-bold text-white text-center mb-12"
             >
-              Dampak Nyata untuk Wonosobo
+              Dampak Nyata untuk Banjarnegara
             </motion.h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
@@ -479,11 +479,11 @@ export default function LandingPage() {
                 <Building2 className="size-4 text-white" />
               </div>
               <span className="font-semibold text-white">
-                SmartCityzen Wonosobo
+                SmartCityzen Banjarnegara
               </span>
             </div>
             <p className="text-sm text-center sm:text-right">
-              &copy; {new Date().getFullYear()} SmartCityzen Wonosobo. Hak cipta
+              &copy; {new Date().getFullYear()} SmartCityzen Banjarnegara. Hak cipta
               dilindungi undang-undang.
             </p>
           </div>

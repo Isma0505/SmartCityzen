@@ -86,7 +86,13 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       {showNavbar && <Navbar />}
       <main className={`flex-1 ${showNavbar ? 'pt-14' : ''}`}>
-        {renderPage()}
+        {['landing', 'login', 'register', 'peta'].includes(currentPage) ? (
+          renderPage()
+        ) : (
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6">
+            {renderPage()}
+          </div>
+        )}
       </main>
       {showFooter && <Footer />}
     </div>

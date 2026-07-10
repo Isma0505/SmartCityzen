@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useStore, type Page } from '@/store/useStore';
 import { Button } from '@/components/ui/button';
+import NotificationDropdown from './NotificationDropdown';
 import { Badge } from '@/components/ui/badge';
 import {
   Sheet,
@@ -44,7 +45,11 @@ export default function Navbar() {
         const res = await fetch(`/api/notifications?userId=${user.id}&unreadOnly=true`);
         if (res.ok) {
           const data = await res.json();
-          setUnreadCount(data.notifications?.length ?? 0);
+          setUnreadCount(
+            Array.isArray(data)
+              ? data.filter((n: any) => !n.read).length
+              : 0
+          );
         }
       } catch {
         // silently fail
@@ -139,21 +144,8 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              {/* Notification bell (WARGA only) */}
-              {!isAdmin && (
-                <button
-                  onClick={() => handleNav('dashboard-warga')}
-                  className="relative p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                  aria-label="Notifikasi"
-                >
-                  <Bell className="size-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center size-4 rounded-full bg-red-500 text-white text-[10px] font-bold">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
-                </button>
-              )}
+              {/* Notification */}
+              {!isAdmin && <NotificationDropdown />}
 
               {/* User name + Keluar (desktop) */}
               <div className="hidden md:flex items-center gap-2">

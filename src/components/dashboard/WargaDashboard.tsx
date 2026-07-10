@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -206,7 +206,7 @@ export default function WargaDashboard() {
             Selamat Datang, {user?.name || 'Warga'}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Pantau laporan dan kontribusi Anda untuk Wonosobo yang lebih baik.
+            Pantau laporan dan kontribusi Anda untuk Banjarnegara yang lebih baik.
           </p>
         </div>
         <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-full">

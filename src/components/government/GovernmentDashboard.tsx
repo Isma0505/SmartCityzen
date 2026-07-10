@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -238,7 +238,7 @@ export default function GovernmentDashboard() {
             <LayoutDashboard className="size-6 text-primary" />
             <div>
               <h1 className="text-lg font-semibold leading-tight">
-                Dashboard Pemerintah - Kota Wonosobo
+                Dashboard Pemerintah - Kota Banjarnegara
               </h1>
               <p className="text-xs text-muted-foreground">
                 Kelola dan pantau laporan warga
@@ -484,7 +484,7 @@ export default function GovernmentDashboard() {
                   <p className="text-sm">Belum ada data</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={320}>
                   <PieChart>
                     <Pie
                       data={statusChartData}
