@@ -47,7 +47,16 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      throw error;
+      console.error("Supabase Storage Error:", error);
+
+      return NextResponse.json(
+        {
+          error,
+        },
+        {
+          status: 500,
+        }
+      );
     }
 
     const { data } = supabase.storage
