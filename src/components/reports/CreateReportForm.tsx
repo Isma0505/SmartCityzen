@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,9 @@ export default function CreateReportForm() {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState(DEFAULT_LAT);
+  const [longitude, setLongitude] = useState(DEFAULT_LNG);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -93,6 +96,74 @@ export default function CreateReportForm() {
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
+
+  const reverseGeocode = async (lat: number, lon: number) => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+    );
+
+    const data = await res.json();
+
+    if (data.display_name) {
+      setAddress(data.display_name);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+useEffect(() => {
+  if (latitude && longitude) {
+    reverseGeocode(latitude, longitude);
+  }
+}, [latitude, longitude]);
+
+const searchAddress = async () => {
+  if (!address.trim()) return;
+
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
+    );
+
+    const data = await res.json();
+
+    if (data.length > 0) {
+      setLatitude(Number(data[0].lat));
+      setLongitude(Number(data[0].lon));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const getCurrentLocation = () => {
+  if (!navigator.geolocation) {
+    alert("Browser tidak mendukung lokasi.");
+    return;
+  }
+
+  setLoadingLocation(true);
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      setLatitude(lat);
+      setLongitude(lon);
+
+      await reverseGeocode(lat, lon);
+
+      setLoadingLocation(false);
+    },
+    () => {
+      alert("Gagal mendapatkan lokasi.");
+      setLoadingLocation(false);
+    }
+  );
+};
 
   const canProceedStep1 = title.trim().length > 0 && description.trim().length > 0;
   const canProceedStep2 = category.length > 0;
@@ -394,15 +465,20 @@ export default function CreateReportForm() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs text-slate-500">Latitude</Label>
-                      <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700">
-                        {DEFAULT_LAT}
-                      </div>
+                      <Input
+                        type="number"
+                        value={latitude}
+                        onChange={(e) => setLatitude(Number(e.target.value))}
+                      />
                     </div>
+
                     <div className="space-y-1">
                       <Label className="text-xs text-slate-500">Longitude</Label>
-                      <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700">
-                        {DEFAULT_LNG}
-                      </div>
+                      <Input
+                        type="number"
+                        value={longitude}
+                        onChange={(e) => setLongitude(Number(e.target.value))}
+                      />
                     </div>
                   </div>
                   <div className="mt-3 flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 p-2.5">
@@ -420,7 +496,27 @@ export default function CreateReportForm() {
                     placeholder="Contoh: Jl. Diponegoro No. 15, Banjarnegara"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
+                    onBlur={searchAddress}
                   />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={getCurrentLocation}
+                    disabled={loadingLocation}
+                    className="w-full"
+                  >
+                    {loadingLocation ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                            Mengambil lokasi...
+                        </>
+                    ) : (
+                        <>
+                            <MapPin className="mr-2 h-4 w-4"/>
+                            Gunakan Lokasi Saya
+                        </>
+                    )}
+                </Button>
                 </div>
 
                 <div className="flex justify-between pt-2">
