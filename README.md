@@ -89,7 +89,7 @@ SmartCityzen adalah platform digital untuk mewujudkan kabupaten Banjarnegara yan
 | **Styling** | Tailwind CSS 4 + shadcn/ui |
 | **Database** | SQLite + Prisma ORM |
 | **State Management** | Zustand (persist) |
-| **AI Analysis** | z-ai-web-dev-sdk (LLM) |
+| **AI Analysis** | gemini-2.5-flash (LLM) |
 | **Peta** | React-Leaflet + OpenStreetMap |
 | **Charts** | Recharts |
 | **Icons** | Lucide React |

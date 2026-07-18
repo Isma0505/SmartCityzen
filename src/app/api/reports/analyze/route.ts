@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       ? 'PERINGATAN: Laporan ini kemungkinan duplikat dari laporan sebelumnya.' 
       : null;
 
-    // AI Analysis using z-ai-web-dev-sdk
+    // AI Analysis using gemini-2.5-flash
     const ai = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY!,
     });

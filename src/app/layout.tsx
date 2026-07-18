@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   keywords: ["SmartCityzen", "Banjarnegara", "pelaporan kabupaten", "aspirasi warga", "smart city", "pemerintah"],
   authors: [{ name: "SmartCityzen Team" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/SmartCityzen.png",
   },
 };
 
