@@ -152,7 +152,7 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0}>
               <Badge className="mb-4 bg-emerald-500/20 text-emerald-100 border-emerald-500/30 text-sm px-3 py-1">
-                Platform Aspirasi Kota Cerdas
+                Platform Aspirasi Cerdas
               </Badge>
             </motion.div>
 
@@ -172,9 +172,9 @@ export default function LandingPage() {
               custom={2}
               className="mt-6 text-lg sm:text-xl text-emerald-100/90 max-w-xl leading-relaxed"
             >
-              Platform digital untuk mewujudkan kota Banjarnegara yang cerdas,
+              Platform digital untuk mewujudkan Kabupaten Banjarnegara yang cerdas,
               partisipatif, dan berkelanjutan. Sampaikan aspirasi Anda dan
-              pantau perkembangan kota secara transparan.
+              pantau perkembangan secara transparan.
             </motion.p>
 
             <motion.div
@@ -306,7 +306,7 @@ export default function LandingPage() {
               custom={1}
               className="mt-4 text-gray-600 max-w-2xl mx-auto"
             >
-              Dilengkapi teknologi canggih untuk pengalaman pelaporan kota yang
+              Dilengkapi teknologi canggih untuk pengalaman pelaporan yang
               lebih efektif dan transparan.
             </motion.p>
           </motion.div>
