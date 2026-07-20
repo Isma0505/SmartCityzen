@@ -484,19 +484,19 @@ export default function GovernmentDashboard() {
                   <p className="text-sm">Belum ada data</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={320}>
+                <ResponsiveContainer width="100%"   height={330}>
                   <PieChart>
                     <Pie
                       data={statusChartData}
                       cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={90}
-                      paddingAngle={4}
+                      cy="42%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      label={false}
+                      labelLine={false}
+                      paddingAngle={3}
                       dataKey="value"
                       nameKey="name"
-                      label={({ name, value }) => `${name.replace(/_/g, ' ')} (${value})`}
-                      labelLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                     >
                       {statusChartData.map((_, index) => (
                         <Cell
@@ -515,7 +515,17 @@ export default function GovernmentDashboard() {
                       }}
                     />
                     <Legend
-                      formatter={(value: string) => value.replace(/_/g, ' ')}
+                      verticalAlign="bottom"
+                      align="center"
+                      iconType="circle"
+                      wrapperStyle={{
+                        fontSize: '12px',
+                        paddingTop: '12px',
+                        lineHeight: '20px',
+                      }}
+                      formatter={(value: string) =>
+                        value.replace(/_/g, ' ')
+                      }
                     />
                   </PieChart>
                 </ResponsiveContainer>
