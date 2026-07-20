@@ -104,6 +104,7 @@ export default function MapContent({ reports, filteredCount, activeFilterLabel, 
         center={BANJARNEGARA_CENTER}
         zoom={DEFAULT_ZOOM}
         className="w-full h-full rounded-xl"
+        style={{ zIndex: 0 }}
         scrollWheelZoom={true}
         zoomControl={true}
       >
@@ -191,7 +192,7 @@ export default function MapContent({ reports, filteredCount, activeFilterLabel, 
       </div>
 
       {/* Report count badge */}
-      <div className="absolute top-4 left-4 z-[1000]">
+      <div className="absolute bottom-4 left-4 z-[1000]">
         <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm shadow-sm border gap-1.5 px-3 py-1">
           <MapPin className="size-3.5" />
           <span className="text-xs font-medium">

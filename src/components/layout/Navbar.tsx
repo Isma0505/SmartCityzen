@@ -168,7 +168,7 @@ export default function Navbar() {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
+            <SheetContent side="right" className="w-72 z-[99999]">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
                   <Building2 className="size-5 text-emerald-600" />
