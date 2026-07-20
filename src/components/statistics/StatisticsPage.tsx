@@ -213,7 +213,7 @@ export default function StatisticsPage() {
 
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
         {/* Overview Cards */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Card className="gap-4 py-4">
             <CardContent className="flex items-center gap-4 px-4">
               <div className="rounded-lg bg-emerald-50 p-2.5">
@@ -268,23 +268,68 @@ export default function StatisticsPage() {
               Laporan Bulanan (Berdasarkan Status)
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 lg:p-6">
             {monthlyChartData.length === 0 ? (
               <div className="flex h-[300px] items-center justify-center text-muted-foreground">
                 <p className="text-sm">Belum ada data bulanan</p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthlyChartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+              <ResponsiveContainer width="100%" height={420}>
+                <BarChart
+                  data={monthlyChartData}
+                  margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend />
-                  <Bar dataKey="DITERIMA" stackId="a" fill={STATUS_COLORS.DITERIMA} name="Diterima" radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="DIPROSES" stackId="a" fill={STATUS_COLORS.DIPROSES} name="Diproses" />
-                  <Bar dataKey="DALAM_PERBAIKAN" stackId="a" fill={STATUS_COLORS.DALAM_PERBAIKAN} name="Dalam Perbaikan" />
-                  <Bar dataKey="SELESAI" stackId="a" fill={STATUS_COLORS.SELESAI} name="Selesai" radius={[4, 4, 0, 0]} />
+
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 10 }}
+                    interval={0}
+                    angle={-30}
+                    textAnchor="end"
+                  />
+
+                  <YAxis
+                    tick={{ fontSize: 10 }}
+                    allowDecimals={false}
+                  />
+
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    wrapperStyle={{ fontSize: 12 }}
+                  />
+
+                  <Legend wrapperStyle={{ fontSize:12 }}/>
+
+                  <Bar
+                    dataKey="DITERIMA"
+                    stackId="a"
+                    fill={STATUS_COLORS.DITERIMA}
+                    name="Diterima"
+                    radius={[0, 0, 0, 0]}
+                  />
+
+                  <Bar
+                    dataKey="DIPROSES"
+                    stackId="a"
+                    fill={STATUS_COLORS.DIPROSES}
+                    name="Diproses"
+                  />
+
+                  <Bar
+                    dataKey="DALAM_PERBAIKAN"
+                    stackId="a"
+                    fill={STATUS_COLORS.DALAM_PERBAIKAN}
+                    name="Dalam Perbaikan"
+                  />
+
+                  <Bar
+                    dataKey="SELESAI"
+                    stackId="a"
+                    fill={STATUS_COLORS.SELESAI}
+                    name="Selesai"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -301,20 +346,20 @@ export default function StatisticsPage() {
                 Distribusi Kategori
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-5 lg:p-6">
               {categoryPieData.length === 0 ? (
                 <div className="flex h-[280px] items-center justify-center text-muted-foreground">
                   <p className="text-sm">Belum ada data kategori</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={420}>
                   <PieChart>
                     <Pie
                       data={categoryPieData}
                       cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={85}
+                      cy="42%"
+                      innerRadius={35}
+                      outerRadius={70}
                       paddingAngle={3}
                       dataKey="value"
                       nameKey="name"
@@ -328,11 +373,15 @@ export default function StatisticsPage() {
                     </Pie>
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend
-                      layout="vertical"
-                      align="right"
-                      verticalAlign="middle"
-                      formatter={(value: string) => (
-                        <span className="text-xs">{value}</span>
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                      align="center"
+                      wrapperStyle={{
+                      fontSize:12,
+                      paddingTop:20
+                      }}
+                      formatter={(value)=>(
+                      <span className="text-xs">{value}</span>
                       )}
                     />
                   </PieChart>
@@ -349,20 +398,20 @@ export default function StatisticsPage() {
                 Distribusi Prioritas
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-5 lg:p-6">
               {priorityPieData.length === 0 ? (
                 <div className="flex h-[280px] items-center justify-center text-muted-foreground">
                   <p className="text-sm">Belum ada data prioritas</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={420}>
                   <PieChart>
                     <Pie
                       data={priorityPieData}
                       cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={85}
+                      cy="42%"
+                      innerRadius={35}
+                      outerRadius={70}
                       paddingAngle={4}
                       dataKey="value"
                       nameKey="name"
@@ -380,11 +429,15 @@ export default function StatisticsPage() {
                     <Tooltip contentStyle={tooltipStyle} />
 
                     <Legend
-                      layout="vertical"
-                      align="right"
-                      verticalAlign="middle"
-                      formatter={(value: string) => (
-                        <span className="text-xs">{value.replace(/_/g, ' ')}</span>
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                      align="center"
+                      wrapperStyle={{
+                      fontSize:12,
+                      paddingTop:20
+                      }}
+                      formatter={(value)=>(
+                      <span className="text-xs">{value}</span>
                       )}
                     />
                   </PieChart>
@@ -404,7 +457,7 @@ export default function StatisticsPage() {
                 Pelapor Teraktif
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-5 lg:p-6">
               {stats.topReporters.length === 0 ? (
                 <div className="flex h-[200px] items-center justify-center text-muted-foreground">
                   <p className="text-sm">Belum ada data</p>
@@ -457,13 +510,13 @@ export default function StatisticsPage() {
                 Area Terbanyak Laporan
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-5 lg:p-6">
               {stats.topAreas.length === 0 ? (
                 <div className="flex h-[200px] items-center justify-center text-muted-foreground">
                   <p className="text-sm">Belum ada data area</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={260}>
                   <BarChart
                     data={stats.topAreas}
                     layout="vertical"
@@ -474,8 +527,8 @@ export default function StatisticsPage() {
                     <YAxis
                       type="category"
                       dataKey="name"
-                      tick={{ fontSize: 11 }}
-                      width={120}
+                      tick={{ fontSize: 10 }}
+                      width={90}
                     />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Bar dataKey="count" radius={[0, 4, 4, 0]}>
@@ -501,7 +554,7 @@ export default function StatisticsPage() {
               Ringkasan Status Laporan
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 lg:p-6">
             {statusSummaryData.length === 0 ? (
               <div className="flex h-[120px] items-center justify-center text-muted-foreground">
                 <p className="text-sm">Belum ada data status</p>
